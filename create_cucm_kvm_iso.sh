@@ -22,10 +22,10 @@
 # main()
 #
 if [ $# -ne 2 ] ; then
-	echo Usage: "`basename $0` SOURCE_ISO DEST_ISO"
-	echo "SOURCE_ISO  origin iso image get from Cisco webpage"
-	echo "DEST_ISO    output iso image supporting KVM installation"
-	exit 1
+    echo Usage: "`basename $0` SOURCE_ISO DEST_ISO"
+    echo "SOURCE_ISO  origin iso image get from Cisco webpage"
+    echo "DEST_ISO    output iso image supporting KVM installation"
+    exit 1
 fi
 
 SOURCE_ISO=$1
@@ -133,11 +133,13 @@ sed -i "/_runtime \$\@/i\    return \$rc" /tmp/CUCM/Cisco/hssi/server_implementa
 sed -i '/_runtime $@/i\}' /tmp/CUCM/Cisco/hssi/server_implementation/KVM/shared/bin/shared_implementation.sh
 sed -i '/_runtime $@/i\\' /tmp/CUCM/Cisco/hssi/server_implementation/KVM/shared/bin/shared_implementation.sh
 
+sed -i 's/VDX_PATTERN="vd"/VDX_PATTERN="sd"/g' /tmp/CUCM/Cisco/hssi/server_implementation/KVM/QEMU/shared/bin/api_implementation.sh
+
 
 
 
 pushd /tmp/CUCM/
-mkisofs -o $CURR_PATH/$DEST_ISO -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -J -R .
+genisoimage -o $CURR_PATH/$DEST_ISO -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -J -R .
 popd
 
 umount /tmp/iso
@@ -145,6 +147,3 @@ umount /tmp/CUCM
 rm -rf /tmp/iso
 rm -rf /tmp/CUCM
 echo "KVM ISO is created at $CURR_PATH/$DEST_ISO"
-
-
-
